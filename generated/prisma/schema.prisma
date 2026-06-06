@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum CompanyTier {
+  FAANG
+  TIER_1
+  TIER_2
+  STARTUP
+  ENTERPRISE
+  UNKNOWN
+}
+
+enum WorkMode {
+  ONSITE
+  HYBRID
+  REMOTE
+}
+
+enum NormalizedLevel {
+  INTERN
+  ENTRY
+  MID
+  SENIOR
+  STAFF
+  PRINCIPAL
+  DISTINGUISHED
+}
+
+model Company {
+  id             String @id @default(cuid())
+  name           String
+  normalizedName String @unique
+  slug           String @unique
+
+  aliases String[] @default([])
+
+  domain String?     @unique
+  tier   CompanyTier @default(UNKNOWN)
+
+  logoUrl String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  compensations CompensationEntry[]
+
+  @@index([tier])
+  @@map("companies")
+}
+
+model CompensationEntry {
+  id String @id @default(cuid())
+
+  companyId String
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Restrict)
+
+  role           String
+  normalizedRole String
+
+  level           String
+  normalizedLevel NormalizedLevel
+
+  levelOrder Int
+
+  city    String?
+  state   String?
+  country String  @default("US")
+
+  workMode WorkMode @default(ONSITE)
+
+  currency String @default("USD")
+
+  baseSalary  Decimal @db.Decimal(12, 2)
+  bonus       Decimal @default(0) @db.Decimal(12, 2)
+  stockAnnual Decimal @default(0) @db.Decimal(12, 2)
+
+  totalComp Decimal @db.Decimal(12, 2)
+
+  submissionHash String @unique
+
+  yearsExperience Int?
+  yearsAtCompany  Int?
+
+  verified Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([companyId])
+  @@index([normalizedRole])
+  @@index([normalizedLevel])
+  @@index([levelOrder])
+  @@index([totalComp])
+  @@index([country, state, city])
+  @@index([companyId, normalizedLevel])
+  @@index([companyId, normalizedRole])
+  @@index([normalizedLevel, totalComp])
+  @@index([companyId, normalizedLevel, totalComp])
+  @@map("compensation_entries")
+}
