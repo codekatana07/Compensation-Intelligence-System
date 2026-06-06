@@ -1,7 +1,6 @@
 import "dotenv/config";
-
-import {NormalizedLevel } from "@prisma/client";
 import { prisma } from "../src/lib/prisma";
+import { $Enums } from "@prisma/client";
 import crypto from "crypto";
 
 const data = [
@@ -28,7 +27,7 @@ const data = [
 
 function getNormalizedLevel(
   level: string
-): NormalizedLevel {
+): $Enums.NormalizedLevel {
   const upper = level.toUpperCase();
 
   if (
@@ -36,7 +35,7 @@ function getNormalizedLevel(
     upper.includes("SDE1") ||
     upper === "59"
   ) {
-    return NormalizedLevel.ENTRY;
+    return $Enums.NormalizedLevel.ENTRY;
   }
 
   if (
@@ -45,7 +44,7 @@ function getNormalizedLevel(
     upper === "60" ||
     upper.includes("P4")
   ) {
-    return NormalizedLevel.MID;
+    return $Enums.NormalizedLevel.MID;
   }
 
   if (
@@ -54,10 +53,10 @@ function getNormalizedLevel(
     upper === "61" ||
     upper.includes("P5")
   ) {
-    return NormalizedLevel.SENIOR;
+    return $Enums.NormalizedLevel.SENIOR;
   }
 
-  return NormalizedLevel.STAFF;
+  return $Enums.NormalizedLevel.STAFF;
 }
 
 function getLevelOrder(level: string): number {
