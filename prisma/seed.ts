@@ -1,9 +1,8 @@
 import "dotenv/config";
 
-import { PrismaClient, NormalizedLevel } from "@prisma/client";
+import {NormalizedLevel } from "@prisma/client";
+import { prisma } from "../src/lib/prisma";
 import crypto from "crypto";
-
-const prisma = new PrismaClient();
 
 const data = [
   ["Google", "Software Engineer", "L3", 140000, 15000, 25000],
